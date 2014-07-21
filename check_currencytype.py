@@ -204,7 +204,6 @@ def hround(num, prc=3):
     strnum_len = len(strnum)
     p_dot = strnum.find('.')
 
-
     if strnum_len - 1 - p_dot < prc+1:
         return strnum
 
@@ -234,8 +233,7 @@ def hround(num, prc=3):
 
 
 if __name__ == '__main__':
-    # print hround(154.9 * 6.204, 3)
-    test_aff_off(1404086400, 1404950400)
-    test_am_aff_off_topn(1404086400, 1404950400)
-    test_am(1404086400, 1404950400)
-    test_adv_off(1404086400, 1404950400)
+    test_aff_off(1400112000, 1405728000)
+    test_am_aff_off_topn(1400112000, 1405728000)
+    test_am(1400112000, 1405728000)
+    test_adv_off(1400112000, 1405728000)
