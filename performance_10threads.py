@@ -10,7 +10,7 @@ def click(sleeptime):
     thread.exit_thread()
 
 def test(): #Use thread.start_new_thread() to create 2 new threads
-    for i in range(10):
+    for i in range(1):
         thread.start_new_thread(click,(0.1,))
 
 

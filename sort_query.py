@@ -76,15 +76,18 @@ def get_dimension_data():
     run_lst = []
     POST_URL = 'http://resin-track-1705388256.us-east-1.elb.amazonaws.com:18080/report/report?'
     url_lst = set_get_url()
-
+    print 'totaly {0} urls'.format(len(url_lst))
+    index = 1
     for data in url_lst:
         postdata = urlencode({'report_param': data})
         begin = datetime.now()
-        rsp = urllib2.build_opener().open(urllib2.Request(POST_URL, postdata))
+        rsp = urllib2.build_opener().open(urllib2.Request(POST_URL, postdata)).read()
         end = datetime.now()
         time_diff = (end - begin).microseconds
         run_lst.append((time_diff, data))
-        time.sleep(0.5)
+        print '{0}, {1}, {2}'.format(index, time_diff, data)
+        index += 1
+        #time.sleep(0.5)
 
     fobj = open('result', 'w')
     sort_run_lst = sorted(run_lst, key=lambda x:x[0])
