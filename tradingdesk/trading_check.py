@@ -1,0 +1,61 @@
+#! /usr/bin/env python
+
+
+import urllib2
+from urllib import urlencode
+from itertools import combinations
+import json
+from time import sleep, time
+import logging
+
+
+TRADING_JSON = '{"settings":{"process_type":"lp","report_id":"14029195015","return_format":"json","time":{"start":1407369600,"end":1407456000,"timezone":0},"data_source":"contrack_druid_datasource_ds","pagination":{"size":10,"page":0}},"data":["clicks","outs","ctr","convs","cr","cost","income","net","roi"],"filters":{"$and":{}},"sort":[],"group":%s}'
+COMMON_GROUP = ["device_id", "country_id","click_id","campaign_id","ref_site","site","click_time","cost_per_click","payout","real_ip","proxy_ip","os_id","carrier_id","mobile_brand_id","screen_h","screen_w","screen_id","city_id","brand_id","model_id","state_id","conversion_time","event","sub1","sub2","sub3","sub4","sub5","sub6","sub7","sub8"]
+
+
+import logging
+
+logging.basicConfig(level=logging.DEBUG,
+        format='%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',
+        datefmt='%a, %d %b %Y %H:%M:%S',
+        filename='tradingdesk.log',
+        filemode='w')
+
+
+class TradingCheck(object):
+    def __init__(self):
+        self.post_url = 'http://172.20.0.70:8080/track/report?'
+        self.fobj = open('error.log', 'w')
+
+    def set_grouplist(self):
+        self.tmplist = []
+        for index in range(5):
+            tmpgroup = list(combinations(COMMON_GROUP, index))
+            for group in tmpgroup:
+                self.tmplist.append(str(list(group)).replace("'", '"'))
+    def check(self):
+        self.set_grouplist()
+        print 'generate group list success......'
+        for trading_json in self.tmplist:
+            if trading_json == "[]":
+                continue
+            trading_json = trading_json.rstrip(']"') + '","offer_id"]'
+            trading_data = TRADING_JSON % trading_json
+            postdata = urlencode({'report_param': trading_data})
+            try:
+                rsp = urllib2.build_opener().open(urllib2.Request(self.post_url, postdata), timeout=5).read()
+                rspdata = json.loads(rsp)['data']['data']
+            except Exception as e:
+                logging.debug('failed: {0}'.format(trading_data))
+                self.fobj.writelines("error: {0}\n".format(trading_data))
+            else:
+                logging.debug('success: {0}'.format(trading_data))
+            sleep(1)
+        exit("exit when error")
+
+
+if __name__ == '__main__':
+    tc = TradingCheck()
+    tc.check()
+
+
