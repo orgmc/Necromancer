@@ -2,7 +2,11 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/../DemnokLannik/.idea/DemnokLannik.iml" filepath="$PROJECT_DIR$/../DemnokLannik/.idea/DemnokLannik.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../FaerieDragon/.idea/FaerieDragon.iml" filepath="$PROJECT_DIR$/../FaerieDragon/.idea/FaerieDragon.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/Necromancer.iml" filepath="$PROJECT_DIR$/.idea/Necromancer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../Yurnero/.idea/Yurnero.iml" filepath="$PROJECT_DIR$/../Yurnero/.idea/Yurnero.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../kunkka/.idea/kunkka.iml" filepath="$PROJECT_DIR$/../kunkka/.idea/kunkka.iml" />
     </modules>
   </component>
 </project>
