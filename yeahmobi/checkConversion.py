@@ -47,9 +47,9 @@ class CheckConversion(object):
             print os.popen(curlCommand).read()
             sleep(10)
             if self._isFound(transaction_id):
-                print 'pass'
+                print 'pass........'
             else:
-                print 'failed'
+                print 'failed......'
             break
 
     def _isFound(self, transaction_id):
