@@ -9,6 +9,8 @@ from time import sleep
 import urllib2
 import urllib
 import json
+import redis
+from random import choice
 
 
 def get_data(query_data):
@@ -27,6 +29,14 @@ def get_data(query_data):
         return None
     return format_data
 
+def getOffInfo():
+
+    # connect redis on 172.30.10.147
+    r = redis.Redis(host='172.30.10.147', port=6378, db=0)
+    offerList = ["7704", "90010531", "90010607", "5986"]
+    affList = ["11021", "90010420", "90010587"]
+    return offerList, affList
+
 class CheckConversion(object):
 
     def __init__(self):
@@ -35,7 +45,7 @@ class CheckConversion(object):
 
     def _setConnection(self):
         conn = pymongo.Connection('172.30.10.147',27017)
-        self.clickLogHasoffer = conn.report.clicklog_hasoffer
+        self.clickLogHasoffer = conn.report.click_log
 
     def _getTransactionid(self):
         dataSet = self.clickLogHasoffer.find()
@@ -43,18 +53,26 @@ class CheckConversion(object):
         for data in dataSet:
             self.transactionidList.append(data.get(u'_id'))
 
+    def _updateRecord(self, transaction_id):
+        offerList, affList = getOffInfo()
+        self.clickLogHasoffer.update({'_id':transaction_id}, {'$set':{'offer':choice(offerList)}})
+        self.clickLogHasoffer.update({'_id':transaction_id}, {'$set':{'aff':choice(affList)}})
+
+
     def _sendConv(self):
         sumCount = len(self.transactionidList)
         print 'get {0} transaction_id'.format(sumCount)
         for transaction_id in self.transactionidList:
-            print "current transaction_id:", transaction_id
+            print transaction_id
+            self._updateRecord(transaction_id)
             curlCommand = """curl 'http://172.30.10.146:8080/conv?transaction_id={0}&adv_sub=advsub&adv_sub2=advsub2&adv_sub3=advsub3&adv_sub4=advsub4&adv_sub5=advsub5&adv_sub6=advsub6&adv_sub7=advsub7&adv_sub8=advsub8' -i -l --header "referer:http://www.65536_conv_1914.com" -H x-forwarded-for:54.86.55.142""".format(transaction_id)
-            print os.popen(curlCommand).read()
-            sleep(10)
-            if self._isFound(transaction_id):
-                print 'pass........'
-            else:
-                print 'failed......'
+            print curlCommand
+            # print os.popen(curlCommand).read()
+            # sleep(10)
+            # if self._isFound(transaction_id):
+            #     print 'pass........'
+            # else:
+            #     print 'failed......'
 
     def _isFound(self, transaction_id):
         queryStr = '{"settings":{"time":{"start":1414022400,"end":1414108800,"timezone":0},"data_source":"ymds_druid_datasource","report_id":"report-id","pagination":{"size":50,"page":0}},"group":[],"data":["click","conversion"],"filters":{"$and":{"transaction_id":{"$eq":"%s"}}},"sort":[]}' % transaction_id
@@ -63,6 +81,8 @@ class CheckConversion(object):
         return False
 
 
+
 if __name__ == '__main__':
+
     cc = CheckConversion()
     cc._sendConv()
