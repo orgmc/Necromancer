@@ -11,7 +11,7 @@ from time import sleep
 
 def heartBeat(timeSleep):
     print 'heart Beat running........'
-    heartUrlList = ['http://10.1.15.12:18080/monitor', 'http://10.1.15.13:18080/monitor']
+    heartUrlList = ['http://172.20.0.69:8080/collector/monitor']
     while True:
         for heartUrl in heartUrlList:
             urllib2.urlopen(urllib2.Request(heartUrl))
